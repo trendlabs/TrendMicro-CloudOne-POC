@@ -2,9 +2,9 @@
 Thank you very much @Renaud Bidou for your excellent resources
 
 ## Overview
-- This will create the whole aws environment for Demo/PoC purpose and cover 5 components of Cloud One (conformity will be added later)
+- This will create the whole aws environment for Demo/PoC purpose and cover 5 components of Cloud One (conformity will be added later). However you can 
 - The provisoned resources include:
-  - On AWS: EKS, Lambda functions, EC2, VPC, ECR, IAM Policies, IAM roles, CloudFormations stacks, CLoudWatch log groups,...
+  - On AWS: EKS, Lambda functions, EC2, VPC, ECR, IAM Policies, IAM roles, CloudFormations stacks, CloudWatch log groups,...
   - On Cloud One:
     - C1WS agents will be auto-deployed on all provisioned EC2 (including eks nodes) without assigned policy
     - C1AS: new c1as group will be provisioned. TMVWA lambda function and TMVWA K8s application will be deployed for testing c1as features
@@ -47,8 +47,8 @@ unzip awscliv2.zip
 - Review all others settings in variables.tf and change if neccessary
 - When you are ready, open terminal and run below commands:
 ```
-  $ git clone https://github.com/trendlabs/c1poc.git
-  $ cd c1poc
+  $ git clone https://github.com/trendlabs/TrendMicro-CloudOne-POC.git
+  $ cd TrendMicro-CloudOne-POC
   $ terraform init
   $ terraform plan
   $ terraform apply -auto-approve
@@ -72,6 +72,8 @@ unzip awscliv2.zip
 ## Troubleshooting
 
 - If during apply / destroy you get error 500 / 400 / 405/ run the below commands and re-run destroy command (and then apply again if you still want to build the infra)
+```
 terraform state rm restapi_object.c1ns-cfn-template
 terraform state rm module.c1ns-set-cloudwatch-logs
 terraform state rm restapi_object.c1ns-recommended-cfn-params
+```
