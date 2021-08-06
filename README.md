@@ -2,7 +2,7 @@
 Thank you very much @Renaud Bidou for your excellent resources
 
 ## Overview
-- This will create the whole aws environment for Demo/PoC purpose and cover 5 components of Cloud One (conformity will be added later). However you can 
+- This will create the whole aws environment for Demo/PoC purpose and cover 5 components of Cloud One (conformity will be added later). However you can
 - The provisoned resources include:
   - On AWS: EKS, Lambda functions, EC2, VPC, ECR, IAM Policies, IAM roles, CloudFormations stacks, CloudWatch log groups,...
   - On Cloud One:
@@ -38,13 +38,13 @@ unzip awscliv2.zip
 ```
 - an AWS Account
 - Cloud One free trial (better to register new one to avoid unexpected things - https://cloudone.trendmicro.com/_workload_iframe/SignIn.screen# )
-- a valid Deep Security Smart Check Activation Code
-- At the time of this document (june2021), C1-network security requires a Cross Account Role with a policy name *NetworkSecurityPolicy*. This policy name is kind of "hard-code", we could not change its name. So if you have an existing IAM Policy named *NetworkSecurityPolicy* then you will have to **rename that existing policy prior to execution of this terraform**. Otherwise it will fail to provision properly.
+- a valid Deep Security API Key
+- At the time of this document (Aug2021), C1-network security requires a Cross Account Role with a policy name *NetworkSecurityPolicy*. This policy name is kind of "hard-code", we could not change its name. So if you have an existing IAM Policy named *NetworkSecurityPolicy* then you will have to **rename that existing policy prior to execution of this terraform**. Otherwise it will fail to provision properly.
 
 ### Let's start
 - Review and update values in terraform.tfvars-example to match your environment
 - Save as new file, name it: terraform.tfvars  
-- Review all others settings in variables.tf and change if neccessary
+- Review all others settings in variables.tf and change if neccessary (recommended to leave all as is if possible)
 - When you are ready, open terminal and run below commands:
 ```
   $ git clone https://github.com/trendlabs/TrendMicro-CloudOne-POC.git
@@ -62,18 +62,14 @@ unzip awscliv2.zip
   - Delete all the LoadBalancer created during the usage of EKS (AWS Mgmnt console \ EC2 \ Load Balancers) - those resources are not managed by this terraform and leaving them will cause terraform cannot clean up the environment
   - Once you delete the above, run below command in folder c1poc:
 ```
-  $ cd c1poc
+  $ cd TrendMicro-CloudOne-POC
   $ terraform destroy -auto-approve
 ```
 
 ## Lab access
-- Once terraform finishes the provision, open the *lab-guide* file (in folder *c1poc*) you will find all the info for lab usage there
+- Once terraform finishes the provision, open the *lab-guide.txt* file (in folder *docs*) you will find all the info for lab usage there
+-
 
 ## Troubleshooting
 
-- If during apply / destroy you get error 500 / 400 / 405/ run the below commands and re-run destroy command (and then apply again if you still want to build the infra)
-```
-terraform state rm restapi_object.c1ns-cfn-template
-terraform state rm module.c1ns-set-cloudwatch-logs
-terraform state rm restapi_object.c1ns-recommended-cfn-params
-```
+- Terraform can only manage the resources that it provisions so for other relating resources that you create during demo / PoC (ELB, S3 object in provisioned buckets, Route53 records,...) you will need to delete prior to run destroy command

@@ -1,0 +1,31 @@
+version: '3.2'
+
+networks:
+  docker:
+
+services:
+
+  jenkins:
+    image: customer-jenkins:v2
+    restart: always
+    networks:
+      - docker
+    ports:
+      - 8443:8443
+      - 50000:50000
+    tty: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - type: bind
+        source: /jenkins/jenkins-data
+        target: /var/jenkins_home
+      - type: bind
+        source: /jenkins/jenkins-certs
+        target: /var/lib/jenkins
+        read_only: true
+      - type: bind
+        source: /home/ec2-user
+        target: /home
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DOCKER_CERT_PATH=/var/lib/jenkins

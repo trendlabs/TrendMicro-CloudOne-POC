@@ -1,0 +1,93 @@
+{
+	"AWSTemplateFormatVersion":"2010-09-09",
+	"Transform":"AWS::Serverless-2016-10-31",
+	"Description": "Trend Micro - Serverless TMVWA",
+	"Resources": {
+		"TMVWA": {
+			"Type": "AWS::Serverless::Function",
+			"DeletionPolicy": "Delete",
+			"Properties": {
+				"FunctionName" : "TrendMicro-poc-App-Sec-tmvwa",
+				"Handler": "tmvwa_function.tmvwa_handler",
+				"CodeUri": "s3://vnlabs-tmvwa/tmvwa.zip",
+				"Runtime": "provided",
+				"Description": "Serverless TMVWA function",
+				"MemorySize": 512,
+				"Timeout": 10,
+				"Role": {
+					"Fn::GetAtt": [
+						"LambdaExecutionRole",
+						"Arn"
+					]
+				},
+				"Events": {
+					"Api1": {
+						"Type": "Api",
+						"Properties": {
+							"Path": "/tmvwa",
+							"Method": "GET"
+						}
+					},
+					"Api2": {
+						"Type": "Api",
+						"Properties": {
+							"Path": "/tmvwa",
+							"Method": "POST"
+						}
+					}
+				},
+				"Environment": {
+					"Variables": {
+						"TREND_AP_KEY": { "Ref": "TrendAPKeyParameter" },
+						"TREND_AP_SECRET": { "Ref": "TrendAPSecretParameter" },
+						"TREND_AP_CACHE_DIR": "/tmp/trend_cache",
+						"TREND_AP_TRANSACTION_FINISH_TIMEOUT": "10",
+						"TREND_AP_LOG_FILE": "STDERR",
+						"TREND_AP_INITIAL_DELAY_MS": "1",
+						"TREND_AP_MAX_DELAY_MS": "100",
+						"TREND_AP_PREFORK_MODE": "False",
+						"TREND_AP_MIN_REPORT_SIZE": "1",
+						"TREND_AP_READY_TIMEOUT": "30",
+						"TREND_AP_HTTP_TIMEOUT": "5"
+					}
+				},
+				"Layers": [ "arn:aws:lambda:ap-southeast-1:800880067056:layer:CloudOne-ApplicationSecurity-runtime-python3_8:1" ]
+			}
+		},
+		"LambdaExecutionRole": {
+			"Type": "AWS::IAM::Role",
+			"DeletionPolicy": "Delete",
+			"Properties": {
+				"AssumeRolePolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [{ "Effect": "Allow", "Principal": {"Service": ["lambda.amazonaws.com"]}, "Action": ["sts:AssumeRole"] }]
+				},
+				"Path": "/",
+				"Policies": [{
+					"PolicyName": "root",
+					"PolicyDocument": {
+						"Version": "2012-10-17",
+						"Statement": [{ "Effect": "Allow", "Action": ["logs:*"], "Resource": "arn:aws:logs:*:*:*" }]
+				  }
+				}]
+			 }
+		}
+	},
+	"Parameters": {
+		"TrendAPKeyParameter": {
+			"Type": "String",
+			"Description": "CloudOne AppSec Group Key"
+		},
+		"TrendAPSecretParameter": {
+			"Type": "String",
+			"Description": "CloudOne AppSec Group Secret"
+		}
+	},
+	"Outputs": {
+		"TmvwaUrl": {
+			"Value": {
+				"Fn::Join": [ "", [ "https://", { "Ref": "ServerlessRestApi" },".execute-api.ap-southeast-1.amazonaws.com/Prod/tmvwa" ] ]
+			}
+		}
+	}
+}

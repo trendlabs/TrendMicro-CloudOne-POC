@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+      registryCredential = 'PRIV-HARBOR'
+      imageName = 'busybox'
+      registryUrl = 'harbor.vnlabs.co'
+    	smartcheckHost = 'smartcheck.vnlabs.co'
+    	smartcheckAuthID = 'PRIV-SMARTCHECK'
+    	preRegistryAuthID = 'SC-PRE-REGISTRY-AUTH'
+   }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/trendlabs/Integrate-SmartCheck-Jenkins.git']]])
+            }
+        }
+
+        stage('Build docker') {
+          steps {
+            script {
+              docker.build("${imageName}")
+            }
+          }
+        }
+        stage ('Deep Security Smart Check scan') {
+          steps {
+            smartcheckScan([
+              imageName: "${imageName}",
+              smartcheckHost: "${smartcheckHost}",
+              smartcheckCredentialsId: "${smartcheckAuthID}",
+              insecureSkipTLSVerify: true,
+              insecureSkipRegistryTLSVerify: true,
+              preregistryScan: true,
+              preregistryCredentialsId: "${preRegistryAuthID}"
+          ])
+        }
+      }
+        stage('Upload Image to Harbor') {
+          steps{
+            script {
+                docker.withRegistry( "http://${registryUrl}", registryCredential ) {
+                  docker.image("${imageName}").push("checked")
+                }
+            }
+          }
+        }
+    }
+}

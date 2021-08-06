@@ -1,0 +1,70 @@
+Resources:
+  NetworkSecurityIamRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Action: 'sts:AssumeRole'
+          Principal:
+            AWS: 'arn:aws:iam::${c1ns_network_security_id}:root'
+      ManagedPolicyArns:
+        - !Ref NetworkSecurityIamPolicy
+      RoleName: ${prefix}-NetworkSecurityRole
+  NetworkSecurityIamPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: Trend Micro Network Security IAM policy
+      ManagedPolicyName: ${policy_name}
+      PolicyDocument: |-
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "cloudconnectorEc2",
+              "Effect": "Allow",
+              "Action": [
+                "ec2:DescribeImages",
+                "ec2:DescribeInternetGateways",
+                "ec2:DescribeInstances",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeAvailabilityZones",
+                "ec2:DescribeVpcs",
+                "ec2:DescribeRegions",
+                "ec2:DescribeNatGateways",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeKeyPairs",
+                "ec2:DescribeRouteTables",
+                "ec2:DescribeSecurityGroups"
+              ],
+              "Resource": "*"
+            },
+            {
+              "Sid": "cloudconnectorIamPolicy",
+              "Effect": "Allow",
+              "Action": [
+                "iam:GetPolicyVersion",
+                "iam:GetPolicy"
+              ],
+              "Resource": "arn:aws:iam::*:policy/${policy_name}"
+            },
+            {
+              "Sid": "cloudconnectorIamRole",
+              "Effect": "Allow",
+              "Action": [
+                "iam:GetRole",
+                "iam:ListAttachedRolePolicies"
+              ],
+              "Resource": "arn:aws:iam::*:role/${prefix}-NetworkSecurityRole"
+            }
+          ]
+        }
+Outputs:
+  NetworkSecurityRoleArn:
+    Description: Network Security role ARN
+    Value: !GetAtt
+      - NetworkSecurityIamRole
+      - Arn
+    Export:
+      Name: !Sub '$${AWS::StackName}-NetworkSecurityRoleArn'

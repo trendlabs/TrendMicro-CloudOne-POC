@@ -1,0 +1,75 @@
+
+// General setting
+general-settings = {
+  win_username      = "pocuser"
+  win_user_fullname = "POC User"
+  lab_password      = "1d0ntkn0w!"
+  lab_region        = "ap-southeast-1"
+  lab_aws_acc       = "YOUR AWS ACC ID"
+
+  iam_access_id     = "YOUR ACCESS KEY ID"
+  iam_access_secret = "YOUR ACCESS KEY SECRET"
+  //------
+
+  key_name    = "poc-labs"
+  admin_email = "test@labs.co" // can be real email to get notification (if any)
+
+  # You'll need to generate your own keys at: https://www.google.com/recaptcha/admin
+  RECAPTCHA_PRIV_KEY = "YOUR RECAPTCHA SECRET"
+  RECAPTCHA_PUB_KEY = "YOUR RECAPTCHA SECRET"
+
+  spot_price               = "0.1"
+  spot_type                = "one-time"
+  billing_alarm_threadhold = 50 // if expense over 20$ then you will get alarm sent to email above, if 0 --> no billing alarm
+}
+
+cloudone-settings = {
+  deploy_c1cs         = true  // if false then no resource relating to C1CS deploy
+  deploy_c1as         = false // if false then no resource relating to C1AS deploy
+  deploy_c1ns         = false // if false then no resource relating to C1NS deploy
+  deploy_c1fss        = false  // if false then no resource relating to C1FSS deploy
+  // Go to cloudone workload security \ Administration \ User Management \ API Key and create new one
+  c1_api_key = "YOUR API KEY"
+  c1ns_policy_name = "NetworkSecurityPolicy" // dont change - currently cannot be changed
+  c1ns_appliance_size = "c5.xlarge" // default for appliance is c5n.4xlarge, set this to reduce cost for demo or you can change back to default value
+}
+
+// DNS settings
+dns-settings = {
+  // dont change this dns-hostnames, only change private domain if neccessary
+  dns-hostnames = [
+    "win",
+    "linux",
+    "winVictim",
+    "linVictim",
+    "linAttacker",
+    "winAttacker",
+    "harbor",
+    "jenkins",
+    "smartcheck",
+    "tmvwa",
+    "ext-tmvwa"
+  ]
+  lab_private_domain = "trendlabs.co"
+}
+
+// admin-vm sevrer related settings
+admin-vm-settings = {
+  ec2_allowed_inbound   = [22, 3389, 80, 8080, 8000]
+  allowed_IPs           = ["42.113.119.160/32"] //public IPs which will be allowed to access RDP / SSH to Bastion hosts
+  protocol              = "tcp"
+  ec2_instance_type     = "t3a.medium"
+  ec2_ami               = "ami-02f26adf094f51167" //ap-southeast-1 (Singapore) - Amazon Linux 2 AMI
+  ec2_win_ami           = "ami-0e0c0f774a3f68bf9" // ap-southeast-1 (Singapore) - Windows 2019 Base (ami-051c081518035d88f - with container)
+  ec2_win_instance_type = "t3a.large"
+}
+
+// S3 Bucket settings
+s3-settings = {
+  use_uploader = false // true --> an S3uploader application will be provision
+  lab_s3bucket            = "vib-poc-s3scan" // bucket to for user to upload files
+  lab_quarantine_s3bucket = "vib-poc-s3quarantine"
+  lab_clean_s3bucket      = "vib-poc-s3clean"
+  lab_c1as_s3bucket       = "vib-poc-c1as-demo"
+  lab_s3bucket_acl        = "private"
+}
