@@ -91,14 +91,14 @@ resource "local_file" "lab-guide" {
   }
 }
 
-resource "null_resource" "c1cs-CodeCommitUserSecret" {
-
-  count = (var.cloudone-settings.deploy_c1cs) ? 1 : 0
-
-  provisioner "local-exec" {
-    command    = <<-EOT
-      echo aws_iam_access_key.CodeCommitUserAccessKey[0].encrypted_secret | base64 --decode | keybase pgp decrypt
-    EOT
-    on_failure = continue
-  }
-}
+# resource "null_resource" "c1cs-CodeCommitUserSecret" {
+#
+#   count = (var.cloudone-settings.deploy_c1cs) ? 1 : 0
+#
+#   provisioner "local-exec" {
+#     command    = <<-EOT
+#       echo aws_iam_access_key.CodeCommitUserAccessKey[0].encrypted_secret | base64 --decode | keybase pgp decrypt
+#     EOT
+#     on_failure = continue
+#   }
+# }
