@@ -90,6 +90,7 @@ resource "local_file" "lab-guide" {
     on_failure = continue
   }
 }
+<<<<<<< HEAD
 
 # resource "null_resource" "c1cs-CodeCommitUserSecret" {
 #
@@ -102,3 +103,5 @@ resource "local_file" "lab-guide" {
 #     on_failure = continue
 #   }
 # }
+=======
+>>>>>>> 1a091ec9dfbbc3c27056939af28e292093c567bf

@@ -5,7 +5,11 @@
 *.tfstate
 *.tfstate.*
 
+<<<<<<< HEAD
 #lock file
+=======
+# lock files
+>>>>>>> 1a091ec9dfbbc3c27056939af28e292093c567bf
 *.lock.*
 
 # Crash log files
