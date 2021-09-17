@@ -23,6 +23,8 @@ locals {
 
   c1ns_cfn_template = (var.cloudone-settings.deploy_c1ns) ? (jsondecode(replace(module.c1ns-cfn-template.stdout, "c5n.4xlarge", "${var.cloudone-settings.c1ns_appliance_size}"))).output : null
 
+  c1ns_api_url_prefix = "https://network.${var.cloudone-settings.region}.cloudone.trendmicro.com/api"
+
   c1ns_cloudwatch_dashboard_instance_id = "NetworkSecurityInstanceId${replace(title(var.general-settings.lab_region), "-", "")}A"
   c1ns_get_cfn_template_payload         = <<EOF
 {
@@ -51,7 +53,7 @@ data "http" "c1ns-get-cross-account-role" {
 
   count = (var.cloudone-settings.deploy_c1ns) ? 1 : 0
 
-  url = "https://cloudone.trendmicro.com/api/network/crossaccountroleiaminfo"
+  url = "${local.c1ns_api_url_prefix}/crossaccountroleiaminfo"
 
   # Optional request headers
   request_headers = {
@@ -88,7 +90,7 @@ resource "aws_cloudformation_stack" "c1ns-new-role-stack" {
 data "http" "c1ns-get-aws-connectors" {
 
   count = (var.cloudone-settings.deploy_c1ns) ? 1 : 0
-  url   = "https://cloudone.trendmicro.com/api/network/awsconnectors"
+  url   = "${local.c1ns_api_url_prefix}/awsconnectors"
 
   # Optional request headers
   request_headers = {
@@ -104,7 +106,7 @@ resource "null_resource" "c1ns-delete-connector" {
   count = (var.cloudone-settings.deploy_c1ns) ? ((local.existing_connector_accountId == var.general-settings.lab_aws_acc) ? 1 : 0) : 0
 
   provisioner "local-exec" {
-    command    = "curl -X DELETE https://cloudone.trendmicro.com/api/network/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"id\": \"${local.c1ns_connector_id}\"}'"
+    command    = "curl -X DELETE ${local.c1ns_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"id\": \"${local.c1ns_connector_id}\"}'"
     on_failure = continue
   }
 }
@@ -123,7 +125,7 @@ resource "null_resource" "c1ns-new-connector" {
 
   //Create new connector
   provisioner "local-exec" {
-    command    = "curl -X POST https://cloudone.trendmicro.com/api/network/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountName\": \"${local.c1ns_account_name}\",\"crossAccountRole\": \"${local.c1ns_network_security_role_arn}\",\"externalId\": \"${local.c1ns_cross_acc_role.externalId}\"}'"
+    command    = "curl -X POST ${local.c1ns_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountName\": \"${local.c1ns_account_name}\",\"crossAccountRole\": \"${local.c1ns_network_security_role_arn}\",\"externalId\": \"${local.c1ns_cross_acc_role.externalId}\"}'"
     on_failure = continue
   }
 
@@ -150,7 +152,7 @@ module "c1ns-recommended-cfn-params" {
     time_sleep.c1ns-wait-for-connector[0]
   ]
   source  = "matti/resource/shell"
-  command = "curl -X POST https://cloudone.trendmicro.com/api/network/recommendedcftparams -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountId\": \"${var.general-settings.lab_aws_acc}\",\"internetGatewayId\": \"${local.protected_vpc_igw}\",\"region\": \"${var.general-settings.lab_region}\"}'"
+  command = "curl -X POST ${local.c1ns_api_url_prefix}/recommendedcftparams -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountId\": \"${var.general-settings.lab_aws_acc}\",\"internetGatewayId\": \"${local.protected_vpc_igw}\",\"region\": \"${var.general-settings.lab_region}\"}'"
 }
 
 # 8. Generate CFN template
@@ -164,7 +166,7 @@ module "c1ns-cfn-template" {
   ]
 
   source  = "matti/resource/shell"
-  command = "curl -X POST https://cloudone.trendmicro.com/api/network/protectigwcfts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ns_get_cfn_template_payload}'"
+  command = "curl -X POST ${local.c1ns_api_url_prefix}/protectigwcfts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ns_get_cfn_template_payload}'"
 
 }
 

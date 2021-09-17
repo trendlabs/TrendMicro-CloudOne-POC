@@ -1,5 +1,6 @@
 locals {
 
+  c1ws_api_url_prefix = "workload.${var.cloudone-settings.region}.cloudone.trendmicro.com/api"
   c1ws_linux_tenant_token = substr((jsondecode(module.c1ws-scripts[0].stdout)).scriptBody, -93, -1)
 
   c1ws_win_deployment_script = trimsuffix(trimprefix((jsondecode(module.c1ws-scripts[1].stdout)).scriptBody, "<powershell>"), "</powershell>")
@@ -25,7 +26,7 @@ EOF
 module "c1ws-scripts" {
   count   = 2
   source  = "matti/resource/shell"
-  command = "curl -X POST https://cloudone.trendmicro.com/api/agentdeploymentscripts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"platform\": \"${local.platform[count.index]}\", \"validateCertificateRequired\": \"true\", \"validateDigitalSignatureRequired\": \"true\", \"activationRequired\": \"true\"}'"
+  command = "curl -X POST https://${local.c1ws_api_url_prefix}/agentdeploymentscripts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"platform\": \"${local.platform[count.index]}\", \"validateCertificateRequired\": \"true\", \"validateDigitalSignatureRequired\": \"true\", \"activationRequired\": \"true\"}'"
 }
 
 resource "local_file" "c1ws_generated_win_script" {
@@ -43,7 +44,7 @@ resource "local_file" "c1ws_generated_linux_script" {
 resource "null_resource" "c1ws-new-connector" {
 
   provisioner "local-exec" {
-    command    = "curl -X POST https://cloudone.trendmicro.com/api/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ws_connector_payload}'"
+    command    = "curl -X POST https://${local.c1ws_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'api-secret-key: ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ws_connector_payload}'"
     on_failure = continue
   }
 }

@@ -53,6 +53,7 @@ variable "general-settings" {
 
 variable "cloudone-settings" {
   default = {
+    region = "us-1"
     deploy_c1cs  = true
     deploy_c1as  = true
     deploy_c1ns  = true
@@ -64,6 +65,7 @@ variable "cloudone-settings" {
     c1ns_policy_name    = "NetworkSecurityPolicy"           // dont change - currently cannot be changed
   }
   type = object({
+    region = string
     c1_api_key          = string
     c1ns_appliance_size = string
     c1ns_policy_name    = string

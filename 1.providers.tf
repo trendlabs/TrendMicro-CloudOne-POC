@@ -18,8 +18,7 @@ provider "aws" {
 }
 
 provider "restapi" {
-
-  uri                  = "https://cloudone.trendmicro.com/api"
+  uri = "https://"
   write_returns_object = true
 
   headers = {

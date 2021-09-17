@@ -24,7 +24,7 @@
   $ curl -O https://secure.eicar.org/eicar_com.zip
   $ aws s3 cp eicar_com.zip s3://${BUCKET_TO_SCAN}
   $ aws s3 cp dsa-install.sh s3://${BUCKET_TO_SCAN}
-  $ aws s3 ls s3://${BUCKET-TO-SCAN}
+  $ aws s3 ls s3://${BUCKET_TO_SCAN}
 ==> Result: eicar is moved to ${QUARANTINEBUCKET}
             dsa-install is moved to ${PROMOTEBUCKET}
 

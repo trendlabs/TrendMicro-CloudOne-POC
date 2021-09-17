@@ -3,7 +3,7 @@ locals {
   // C1AS
   c1as_group_key    = (var.cloudone-settings.deploy_c1as) ? (jsondecode(restapi_object.c1as-new-group[0].api_response)).credentials.key : "none"
   c1as_group_secret = (var.cloudone-settings.deploy_c1as) ? (jsondecode(restapi_object.c1as-new-group[0].api_response)).credentials.secret : "none"
-
+  c1as_api_url_prefix = "application.${var.cloudone-settings.region}.cloudone.trendmicro.com"
 }
 # 1. Create a new group
 
@@ -11,7 +11,7 @@ resource "restapi_object" "c1as-new-group" {
 
   count = (var.cloudone-settings.deploy_c1as) ? 1 : 0
 
-  path          = "/application/accounts/groups"
+  path          = "${c1as_api_url_prefix}/accounts/groups"
   create_method = "POST"
   id_attribute  = "group_id"
 

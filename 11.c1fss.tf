@@ -12,20 +12,21 @@ locals {
 
   c1fss_scanner_cfn = (var.cloudone-settings.deploy_c1fss) ? data.http.c1fss-get-scanner-cfn-template[0].body : null
   c1fss_storage_cfn = (var.cloudone-settings.deploy_c1fss) ? data.http.c1fss-get-storage-cfn-template[0].body : null
+  c1fss_api_url_prefix = "filestorage.${var.cloudone-settings.region}.cloudone.trendmicro.com/api"
 }
 
 data "http" "c1fss-get-scanner-cfn-template" {
 
   count = (var.cloudone-settings.deploy_c1fss) ? 1 : 0
 
-  url = "https://raw.githubusercontent.com/trendmicro/cloudone-filestorage-cloudformation-templates/master/templates/FSS-Scanner-Stack.template"
+  url = "https://raw.githubusercontent.com/trendmicro/cloudone-filestorage-deployment-templates/master/aws/FSS-Scanner-Stack.template"
 }
 
 data "http" "c1fss-get-storage-cfn-template" {
 
   count = (var.cloudone-settings.deploy_c1fss) ? 1 : 0
 
-  url = "https://raw.githubusercontent.com/trendmicro/cloudone-filestorage-cloudformation-templates/master/templates/FSS-Storage-Stack.template"
+  url = "https://raw.githubusercontent.com/trendmicro/cloudone-filestorage-deployment-templates/master/aws/FSS-Storage-Stack.template"
 }
 
 // Tao 3 S3bucket de test C1 File Storage Security
@@ -141,7 +142,7 @@ resource "aws_iam_role_policy_attachment" "c1fss-role-managed-policy" {
 data "http" "get-external-ID" {
   count = (var.cloudone-settings.deploy_c1fss) ? 1 : 0
 
-  url = "https://cloudone.trendmicro.com/api/filestorage/external-id"
+  url = "https://${local.c1fss_api_url_prefix}/external-id"
 
   # Optional request headers
   request_headers = {
@@ -213,8 +214,8 @@ resource "aws_cloudformation_stack" "c1fss-storage-stack" {
 resource "restapi_object" "c1fss-add-scanner-stack" {
 
   count = (var.cloudone-settings.deploy_c1fss) ? 1 : 0
-
-  path          = "/filestorage/stacks"
+  
+  path          = "${local.c1fss_api_url_prefix}/stacks"
   create_method = "POST"
   id_attribute  = "stackID"
 
@@ -244,8 +245,8 @@ resource "restapi_object" "c1fss-add-storage-stack" {
   count = (var.cloudone-settings.deploy_c1fss) ? 1 : 0
 
   depends_on = [time_sleep.c1fsss-wait-for-scanner[0]]
-
-  path          = "/filestorage/stacks"
+  
+  path          = "${local.c1fss_api_url_prefix}/stacks"
   create_method = "POST"
   id_attribute  = "stackID"
 

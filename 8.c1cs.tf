@@ -4,7 +4,7 @@ locals {
   c1cs_policy_id      = (var.cloudone-settings.deploy_c1cs) ? (jsondecode(restapi_object.c1cs-new-policy[0].api_response)).id : "none"
   c1cs_cluster_apikey = (var.cloudone-settings.deploy_c1cs) ? (jsondecode(restapi_object.c1cs-new-cluster[0].api_response)).apiKey : "none"
   c1cs_scanner_apikey = (var.cloudone-settings.deploy_c1cs) ? (jsondecode(restapi_object.c1cs-new-scanner[0].api_response)).apiKey : "none"
-
+  c1cs_api_url_prefix = "container.${var.cloudone-settings.region}.cloudone.trendmicro.com/api"
 }
 
 
@@ -13,7 +13,7 @@ resource "restapi_object" "c1cs-new-policy" {
 
   count = (var.cloudone-settings.deploy_c1cs) ? 1 : 0
 
-  path          = "/container/policies"
+  path          = "${local.c1cs_api_url_prefix}/policies"
   create_method = "POST"
 
   data = <<EOF
@@ -232,7 +232,7 @@ resource "restapi_object" "c1cs-new-cluster" {
 
   count = (var.cloudone-settings.deploy_c1cs) ? 1 : 0
 
-  path          = "/container/clusters"
+  path          = "${local.c1cs_api_url_prefix}/clusters"
   create_method = "POST"
 
   data = <<EOF
@@ -251,7 +251,7 @@ resource "restapi_object" "c1cs-new-scanner" {
 
   count = (var.cloudone-settings.deploy_c1cs) ? 1 : 0
 
-  path          = "/container/scanners"
+  path          = "${local.c1cs_api_url_prefix}/scanners"
   create_method = "POST"
 
   data = <<EOF

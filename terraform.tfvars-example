@@ -24,6 +24,7 @@ general-settings = {
 }
 
 cloudone-settings = {
+  region = "us-1" // Your Cloud One account region
   deploy_c1cs         = true  // if false then no resource relating to C1CS deploy
   deploy_c1as         = false // if false then no resource relating to C1AS deploy
   deploy_c1ns         = false // if false then no resource relating to C1NS deploy
