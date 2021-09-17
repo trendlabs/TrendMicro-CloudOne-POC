@@ -11,7 +11,7 @@ resource "restapi_object" "c1as-new-group" {
 
   count = (var.cloudone-settings.deploy_c1as) ? 1 : 0
 
-  path          = "${c1as_api_url_prefix}/accounts/groups"
+  path          = "${local.c1as_api_url_prefix}/accounts/groups"
   create_method = "POST"
   id_attribute  = "group_id"
 
