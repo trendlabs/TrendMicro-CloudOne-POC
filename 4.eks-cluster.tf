@@ -42,12 +42,12 @@ module "eks" {
 
   source = "terraform-aws-modules/eks/aws"
 
-  create_eks = var.cloudone-settings.deploy_c1cs
+  create = var.cloudone-settings.deploy_c1cs
 
   cluster_name    = local.cluster_name
   cluster_version = "1.19"
 
-  subnets = local.eks-vpc-private-subnets
+  subnet_ids = local.eks-vpc-private-subnets
 
   enable_irsa = true // create OpenID Connect Provider for EKS to enable IRSA
 
@@ -59,7 +59,7 @@ module "eks" {
 
   vpc_id = local.eks-vpc-id
 
-  workers_group_defaults = {
+  self_managed_node_group_defaults = {
     root_volume_type    = "gp2"
     key_name            = var.general-settings.key_name
     additional_userdata = local.eks_worker_node_init
@@ -71,7 +71,7 @@ module "eks" {
     subnets = "${local.eks-vpc-private-subnets}"
   }
 
-  worker_groups = [
+  self_managed_node_groups = [
     # {
     #   name                          = "on-demand-1"
     #   instance_type                 = "m4.xlarge"
@@ -85,6 +85,7 @@ module "eks" {
       asg_desired_capacity = var.node-settings.asg_desired_capacity
       asg_max_size         = var.node-settings.asg_max_size
       kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot"
+      launch_template_name   = "spot-1"
     },
   ]
 
