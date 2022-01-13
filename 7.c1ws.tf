@@ -26,7 +26,7 @@ EOF
 module "c1ws-scripts" {
   count   = 2
   source  = "matti/resource/shell"
-  command = "curl -X POST https://${local.c1ws_api_url_prefix}/agentdeploymentscripts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '{\"platform\": \"${local.platform[count.index]}\", \"validateCertificateRequired\": \"true\", \"validateDigitalSignatureRequired\": \"true\", \"activationRequired\": \"true\"}'"
+  command = "curl --location --request POST https://${local.c1ws_api_url_prefix}/agentdeploymentscripts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-raw '{\"platform\": \"${local.platform[count.index]}\", \"validateCertificateRequired\": \"true\", \"validateDigitalSignatureRequired\": \"true\", \"activationRequired\": \"true\"}'"
 }
 
 resource "local_file" "c1ws_generated_win_script" {
