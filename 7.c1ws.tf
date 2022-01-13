@@ -44,6 +44,7 @@ resource "local_file" "c1ws_generated_linux_script" {
 resource "null_resource" "c1ws-new-connector" {
 
   provisioner "local-exec" {
-    command    = "curl -X POST https://${local.c1ws_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ws_connector_payload}'"    on_failure = continue
+    command    = "curl -X POST https://${local.c1ws_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ws_connector_payload}'"    
+    on_failure = continue
   }
 }
