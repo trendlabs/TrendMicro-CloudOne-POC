@@ -20,16 +20,19 @@ Thank you very much @Renaud Bidou for your excellent resources
 
 ### Requirements
 - Prepare a Linux machine (*This terraform tested on Ubuntu 20.04 (but Amazon Linux 2 / Centos should be OK*).If you dont have one, you can create a t2.micro/t3a.micro EC2 Linux Amazon 2 for running this - please keep this EC2 (either running or stop state)  until you successfully destroy/cleanup the lab later.
-- Terraform cli (https://learn.hashicorp.com/tutorials/terraform/install-cli)
+- Terraform cli (https://www.terraform.io/downloads): below example works with Centos/RHEL, see the provided link for other OS
 - AWS cli, git, jq
 ```
 #install terraform
 sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+
+#for Centos/RHEL
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
 sudo yum -y install terraform
 
 # install required packages
-yum install -y git jq
+sudo yum install -y git jq
 
 # install aws cli
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
@@ -56,6 +59,10 @@ unzip awscliv2.zip
 *Note: terraform needs about 20-30mi to provision the lab*
 
 - After infra provisioned,
+  - get kubeconfig to connect to eks cluster:
+  ```
+  aws eks update-kubeconfig --region <aws region-code> --name <cluster-name>
+  ```
   - make sure a file ***terraform.tfstate*** generated in the same folder. This file is critical for your to clean up all the labs after the session
   - a lab-guide file will be generated in the c1poc folder, open it for instructions
 - To remove / clean-up all the infra, you will need to do the following:

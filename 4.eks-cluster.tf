@@ -1,7 +1,7 @@
 locals {
   // eks
   cluster_name = "${local.prefix}-eks-cluster"
-  kube_config  = module.eks.kubeconfig
+  kube_config  = module.eks.cluster_certificate_authority_data
 
   eks_worker_node_init = templatefile("user-data/init-scripts/eks-worker-init.sh", {
     COMMONNAME  = var.dns-settings.lab_private_domain,

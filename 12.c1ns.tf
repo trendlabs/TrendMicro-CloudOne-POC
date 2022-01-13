@@ -125,7 +125,7 @@ resource "null_resource" "c1ns-new-connector" {
 
   //Create new connector
   provisioner "local-exec" {
-    command    = "curl -X POST ${local.c1ns_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountName\": \"${local.c1ns_account_name}\",\"crossAccountRole\": \"${local.c1ns_network_security_role_arn}\",\"externalId\": \"${local.c1ns_cross_acc_role.externalId}\"}'"
+    command    = "curl -X POST ${local.c1ns_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountName\": \"${local.c1ns_account_name}\",\"crossAccountRole\": \"${local.c1ns_network_security_role_arn}\",\"externalId\": \"${local.c1ns_cross_acc_role.externalId}\"}'"
     on_failure = continue
   }
 
@@ -152,7 +152,7 @@ module "c1ns-recommended-cfn-params" {
     time_sleep.c1ns-wait-for-connector[0]
   ]
   source  = "matti/resource/shell"
-  command = "curl -X POST ${local.c1ns_api_url_prefix}/recommendedcftparams -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountId\": \"${var.general-settings.lab_aws_acc}\",\"internetGatewayId\": \"${local.protected_vpc_igw}\",\"region\": \"${var.general-settings.lab_region}\"}'"
+  command = "curl -X POST ${local.c1ns_api_url_prefix}/recommendedcftparams -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '{\"accountId\": \"${var.general-settings.lab_aws_acc}\",\"internetGatewayId\": \"${local.protected_vpc_igw}\",\"region\": \"${var.general-settings.lab_region}\"}'"
 }
 
 # 8. Generate CFN template
@@ -166,7 +166,7 @@ module "c1ns-cfn-template" {
   ]
 
   source  = "matti/resource/shell"
-  command = "curl -X POST ${local.c1ns_api_url_prefix}/protectigwcfts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ns_get_cfn_template_payload}'"
+  command = "curl -X POST ${local.c1ns_api_url_prefix}/protectigwcfts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ns_get_cfn_template_payload}'"
 
 }
 

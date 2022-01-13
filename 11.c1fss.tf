@@ -148,7 +148,7 @@ data "http" "get-external-ID" {
   request_headers = {
     Content-Type   = "application/json"
     api-version    = "v1"
-    Authorization = var.cloudone-settings.c1_api_key
+    Authorization = "ApiKey ${var.cloudone-settings.c1_api_key}"
   }
 }
 

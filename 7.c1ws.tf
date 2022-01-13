@@ -26,7 +26,7 @@ EOF
 module "c1ws-scripts" {
   count   = 2
   source  = "matti/resource/shell"
-  command = "curl -X POST https://${local.c1ws_api_url_prefix}/agentdeploymentscripts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ${var.cloudone-settings.c1_api_key}' --data-binary '{\"platform\": \"${local.platform[count.index]}\", \"validateCertificateRequired\": \"true\", \"validateDigitalSignatureRequired\": \"true\", \"activationRequired\": \"true\"}'"
+  command = "curl -X POST https://${local.c1ws_api_url_prefix}/agentdeploymentscripts -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '{\"platform\": \"${local.platform[count.index]}\", \"validateCertificateRequired\": \"true\", \"validateDigitalSignatureRequired\": \"true\", \"activationRequired\": \"true\"}'"
 }
 
 resource "local_file" "c1ws_generated_win_script" {
@@ -44,6 +44,6 @@ resource "local_file" "c1ws_generated_linux_script" {
 resource "null_resource" "c1ws-new-connector" {
 
   provisioner "local-exec" {
-    command    = "curl -X POST https://${local.c1ws_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ws_connector_payload}'"    on_failure = continue
+    command    = "curl -X POST https://${local.c1ws_api_url_prefix}/awsconnectors -H 'Content-Type: application/json' -H 'api-version: v1' -H 'Authorization: ApiKey ${var.cloudone-settings.c1_api_key}' --data-binary '${local.c1ws_connector_payload}'"    on_failure = continue
   }
 }
